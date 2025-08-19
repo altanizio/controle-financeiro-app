@@ -131,7 +131,7 @@ def exibir_ganhos_gastos_tipo(df):
         labels={"valor": "Reais (R$)", "tipo": "Tipo"},
         height=400,
         text_auto=True,
-        title="Bancos",
+        title="Ganhos e Gastos por Tipo",
         color_discrete_sequence=palette,
     )
 
