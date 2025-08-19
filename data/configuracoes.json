@@ -1,0 +1,46 @@
+{
+    "natureza": [
+        "Gastos",
+        "Ganhos",
+        "Transferência",
+        "Pag.Fatura"
+    ],
+    "tipo": [
+        "Salário",
+        "Bolsa",
+        "Transporte",
+        "Celular",
+        "Alimentação",
+        "Serviço",
+        "Vendas",
+        "Compras",
+        "Viagem",
+        "Transferência",
+        "Saúde",
+        "Doação",
+        "Investimentos",
+        "Pet",
+        "Outros"
+    ],
+    "modo": [
+        "Cartão",
+        "Pix",
+        "Dinheiro",
+        "TED",
+        "Débito",
+        "Outros"
+    ],
+    "banco": [
+        "Nubank",
+        "Inter",
+        "BB",
+        "Bradesco",
+        "BTG",
+        "Outros"
+    ],
+    "fechamento_fatura": {
+        "Nubank": 12,
+        "Inter": 12,
+        "BTG": 12
+    }
+}
