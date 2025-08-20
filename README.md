@@ -1,6 +1,6 @@
-# ORÇAMENTO APP
+# Controle Financeiro Pessoal - APP
 
-Aplicação em **Python** para controle de orçamento pessoal, com suporte a importação e exportação de transações, além de visualização interativa de dados financeiros.
+Aplicação em **Python** para controle financeiro pessoal, com suporte a importação e exportação de transações, além de visualização interativa de dados financeiros.
 
 ---
 
