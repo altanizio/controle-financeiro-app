@@ -1,9 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import locale
-
-locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
 
 palette = [
     "#fdb462",  # Light orange
@@ -63,11 +60,6 @@ def exibir_grafico_ganhos_gastos(df):
         .abs()
         .reset_index()
         .sort_values(["ano_mes"])
-    )
-
-    resultado_ganhos_gastos["ano_mes"] = resultado_ganhos_gastos["ano_mes"].astype(str)
-    resultado_ganhos_gastos["ano_mes"] = pd.to_datetime(
-        resultado_ganhos_gastos["ano_mes"]
     )
 
     fig_gastos_ganhos = px.line(

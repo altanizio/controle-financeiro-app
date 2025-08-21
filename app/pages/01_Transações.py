@@ -9,6 +9,7 @@ from services.transacoes import (
     formulario_remover_transacao,
     formulario_modificar_transacao,
     formulario_transferencia_transacao,
+    abrir_comprovante,
 )
 from components.tables_cards import exibir_cartao_inicial, exibir_n_linhas_df
 from utils.calculadora import calculadora
@@ -32,7 +33,10 @@ df = df_transacoes_conf()
 
 exibir_cartao_inicial(df)
 
-exibir_n_linhas_df(df)
+if not df.empty:
+    exibir_n_linhas_df(df)
+else:
+    st.info("Sem dados, por favor adicione transações.")
 
 st.header("Operações")
 
@@ -49,6 +53,7 @@ with right:
     if not df.empty:
         formulario_remover_transacao(df)
         formulario_transferencia_transacao()
+        abrir_comprovante(df)
     else:
         st.info("Sem dados, por favor adicione transações.")
 

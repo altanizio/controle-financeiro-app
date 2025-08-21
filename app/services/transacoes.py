@@ -4,12 +4,16 @@ import sqlite3
 import json
 from pathlib import Path
 import time
+from datetime import datetime
+import os
+import platform
 
 DB_PATH = Path("data/orcamento.db")
+COMPROVANTE_DIR = Path("data/comprovantes")
 
-config_path = Path("data/configuracoes.json")
+CONFIG_PATH = Path("data/configuracoes.json")
 
-with config_path.open("r", encoding="utf-8") as f:
+with CONFIG_PATH.open("r", encoding="utf-8") as f:
     CONFIG = json.load(f)
 
 
@@ -115,18 +119,40 @@ def formulario_adicionar_transacao():
         natureza = st.selectbox("Natureza", CONFIG["natureza"])
 
         valor_input = st.number_input("Valor", min_value=0.0, format="%.2f", step=1.0)
-        tipo = st.selectbox("Tipo", CONFIG["tipo"], index=0)
+        tipo = st.selectbox("Tipo", CONFIG["tipo"], index=14)
         modo_pag = st.selectbox("Modo de pagamento/recebimento", CONFIG["modo"])
 
         parcelas = st.number_input("Parcelas", min_value=1, step=1)
 
-        banco = st.selectbox("Banco", CONFIG["banco"], index=0)
+        banco = st.selectbox("Banco", CONFIG["banco"], index=5)
         obs = st.text_area("Observações")
-        comprovante = st.text_input("Nota fiscal/Comprovante")
+
+        arquivo = st.file_uploader(
+            "Nota fiscal/Comprovante", type=["pdf", "jpg", "png", "jpeg"]
+        )
 
         submitted = st.form_submit_button("Adicionar")
 
         if submitted:
+            if arquivo is not None:
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+                ext = os.path.splitext(arquivo.name)[1]
+
+                nome_arquivo = f"{obs}_{timestamp}{ext}"
+
+                caminho_arquivo = os.path.join(COMPROVANTE_DIR, nome_arquivo)
+
+                with open(caminho_arquivo, "wb") as f:
+                    f.write(arquivo.getbuffer())
+
+                st.success(f"Comprovante salvo em: {caminho_arquivo}")
+
+                comprovante = caminho_arquivo
+            else:
+                st.warning("Nenhum comprovante selecionado.")
+                comprovante = ""
+
             valor = valor_input
             if natureza in ["Gastos", "Pag.Fatura"]:
                 valor = -valor
@@ -223,7 +249,6 @@ def formulario_modificar_transacao(df):
     if transacao_atual.empty:
         st.warning("ID não encontrado!")
 
-    # Formulário de modificação
     with st.form("form_modificar"):
         data = st.date_input("Data", value=transacao_atual["data"])
         hora = st.time_input("Hora", value=transacao_atual["hora"])
@@ -276,7 +301,6 @@ def formulario_modificar_transacao(df):
 def formulario_transferencia_transacao():
     st.subheader("↔️ Transferência entre bancos")
 
-    # Formulário de cadastro
     with st.form("form_transferencia"):
         data = st.date_input("Data")
         hora = st.time_input("Hora")
@@ -315,3 +339,44 @@ def formulario_transferencia_transacao():
             st.success("✅ Transferência realizada com sucesso!")
             time.sleep(1)
             st.rerun()
+
+
+def abrir_comprovante(df):
+    st.subheader("📄 Abrir Comprovante")
+
+    max_id = df["id"].max()
+
+    id = st.number_input(
+        "ID da transação para abrir o comprovante",
+        min_value=0,
+        max_value=max_id,
+        value=max_id,
+        step=1,
+    )
+
+    df_id = df[df["id"] == id]
+
+    if df_id.empty:
+        st.warning("ID não encontrado!")
+    else:
+        comprovante = df_id["comprovante"].values[0]
+        if comprovante and os.path.exists(comprovante):
+            if st.button("Abrir Comprovante"):
+                try:
+                    if platform.system() == "Windows":
+                        os.startfile(comprovante)
+                        st.success(
+                            f"Abrindo {comprovante} no aplicativo padrão do Windows."
+                        )
+                    else:
+                        raise OSError("Não é Windows")
+                except Exception as e:
+                    st.warning(f"Não foi possível abrir automaticamente: {e}")
+                    with open(comprovante, "rb") as f:
+                        st.download_button(
+                            label="Baixar Comprovante",
+                            data=f,
+                            file_name=os.path.basename(comprovante),
+                        )
+        else:
+            st.warning("Nenhum comprovante encontrado para esta transação.")
