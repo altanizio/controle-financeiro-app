@@ -7,8 +7,7 @@ def aplicar_filtros(df, visao_geral=False):
     if df.empty:
         return df
 
-    if df["data"].dtype == "O":
-        df["data"] = pd.to_datetime(df["data"], errors="coerce").dt.date
+    df["data"] = pd.to_datetime(df["data"], errors="coerce").dt.date
 
     st.sidebar.markdown("### 🔎 Filtros")
 

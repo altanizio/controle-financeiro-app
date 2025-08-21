@@ -18,18 +18,17 @@ palette = [
 ]
 
 
-def ajustar_moeda(fig, df):
-    fig.update_yaxes(tickformat=",")  # separador de milhares
+def ajustar_moeda(fig, resultado):
+    fig.update_yaxes(tickformat=",")
     fig.update_yaxes(tickprefix="R$ ")
 
     fig.update_traces(
-        hovertemplate=df["valor"].apply(
-            lambda x: f"Total: {locale.currency(x, grouping=True)}"
-        )
+        hovertemplate=" %{x}: R$ %{y:,.2f}<extra></extra>",
+        texttemplate="R$ %{y:,.2f}",
     )
 
 
-def exibir_grafico_cartao_credito(df):
+def exibir_grafico_cartao_credito(df, fatura_cond):
     resultado_cartao = (
         df[df["modo_pag"] == "Cartão"]
         .groupby(["banco", "ano_mes_fatura", "ano_mes_fatura_num"])["valor"]
@@ -47,7 +46,7 @@ def exibir_grafico_cartao_credito(df):
         labels={"banco": "Banco", "ano_mes_fatura": "Data", "valor": "Fatura (R$)"},
         height=400,
         text_auto=True,
-        title="Fatura do cartão",
+        title=f"Fatura do cartão - {fatura_cond}",
         color_discrete_sequence=palette,
     )
 
@@ -131,7 +130,7 @@ def exibir_ganhos_gastos_tipo(df):
         labels={"valor": "Reais (R$)", "tipo": "Tipo"},
         height=400,
         text_auto=True,
-        title="Ganhos e Gastos por Tipo",
+        title="Bancos",
         color_discrete_sequence=palette,
     )
 

@@ -1,6 +1,7 @@
 import json
 import streamlit as st
 from pathlib import Path
+from services.layout_ajustes import remove_deploy_buttom, remove_page_margin
 
 FILE = Path("data/configuracoes.json")
 
@@ -18,7 +19,10 @@ def save_json(data):
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-st.title("📝 Configurações")
+st.title("Configurações")
+
+remove_deploy_buttom()
+remove_page_margin()
 
 data = load_json()
 
@@ -55,6 +59,6 @@ for key, value in data.items():
             new_dict[subkey] = st.text_input(f"{key} - {subkey}", value=str(subvalue))
         data[key] = new_dict
 
-if st.button("💾 Salvar alterações"):
+if st.button("Salvar alterações"):
     save_json(data)
     st.success("Configurações salvas com sucesso!")

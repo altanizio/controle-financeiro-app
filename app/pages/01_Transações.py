@@ -12,12 +12,14 @@ from services.transacoes import (
 )
 from components.tables_cards import exibir_cartao_inicial, exibir_n_linhas_df
 from utils.calculadora import calculadora
+from services.layout_ajustes import remove_deploy_buttom, remove_page_margin
 
 DB_PATH = Path("data/orcamento.db")
 
 st.set_page_config(page_title="Transações", page_icon="📥", layout="wide")
 
-st.header("Resumo")
+remove_deploy_buttom()
+remove_page_margin()
 
 
 def df_transacoes_conf():
@@ -39,16 +41,16 @@ left, center, right = st.columns(3, border=True)
 with left:
     formulario_adicionar_transacao()
 with center:
-    if df.empty:
-        st.info("Sem dados para modificar.")
-    else:
+    if not df.empty:
         formulario_modificar_transacao(df)
-with right:
-    if df.empty:
-        st.info("Sem dados para remover ou transferir.")
     else:
+        st.info("Sem dados, por favor adicione transações.")
+with right:
+    if not df.empty:
         formulario_remover_transacao(df)
         formulario_transferencia_transacao()
+    else:
+        st.info("Sem dados, por favor adicione transações.")
 
 st.header("⬆️ Exportar Transações")
 
